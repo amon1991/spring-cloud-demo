@@ -21,4 +21,9 @@ public class HelloControler {
         return helloService.hiService(name);
     }
 
+    @RequestMapping(value = "/commonHi")
+    public String commonHi(@RequestParam String name) {
+        return helloService.commonHiService(name);
+    }
+
 }

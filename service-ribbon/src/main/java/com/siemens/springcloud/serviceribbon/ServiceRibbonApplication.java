@@ -15,10 +15,18 @@ public class ServiceRibbonApplication {
 		SpringApplication.run(ServiceRibbonApplication.class, args);
 	}
 
-    @Bean
+    @Bean(name = "ribbonRestTemplate")
     @LoadBalanced
-    RestTemplate restTemplate() {
+    RestTemplate ribbonRestTemplate() {
         return new RestTemplate();
     }
+
+
+    @Bean(name = "commonRestTemplate")
+    RestTemplate commonRestTemplate() {
+        return new RestTemplate();
+    }
+
+
 
 }
