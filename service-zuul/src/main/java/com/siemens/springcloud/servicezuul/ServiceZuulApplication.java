@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
-import org.springframework.cloud.netflix.zuul.filters.route.ZuulFallbackProvider;
+import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,20 +22,23 @@ import java.io.InputStream;
 @RestController
 public class ServiceZuulApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ServiceZuulApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceZuulApplication.class, args);
+    }
 
     @Bean
-    public ZuulFallbackProvider zuulFallbackProvider() {
-        return new ZuulFallbackProvider() {
-            @Override
-            public String getRoute() {
-                return "*";
-            }
+    public FallbackProvider zuulFallbackProvider() {
+        return new FallbackProvider() {
 
             @Override
-            public ClientHttpResponse fallbackResponse() {
+            public ClientHttpResponse fallbackResponse(Throwable cause) {
+
+                cause.printStackTrace();
+
+                return getClientHttpResponse();
+            }
+
+            private ClientHttpResponse getClientHttpResponse() {
                 return new ClientHttpResponse() {
                     @Override
                     public HttpStatus getStatusCode() throws IOException {
@@ -70,6 +73,17 @@ public class ServiceZuulApplication {
                     }
                 };
             }
+
+            @Override
+            public String getRoute() {
+                return "*";
+            }
+
+            @Override
+            public ClientHttpResponse fallbackResponse() {
+                return getClientHttpResponse();
+            }
+
         };
     }
 }
